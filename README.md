@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZapFill
 
-## Getting Started
+<p align="center">
+  <img src="path_to_your_logo.png" alt="ZapFill Logo" width="200"/>
+</p>
 
-First, run the development server:
+ZapFill is an AI-powered document automation tool that revolutionizes the way people handle paperwork. By leveraging advanced LLM technology, ZapFill streamlines form filling for job onboarding, tax filings, legal documents, and more.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+
+### Secure Profile Management
+
+- Store personal information securely
+- Save frequently used data like name, address, phone number
+- Digital signature storage and management
+- End-to-end encryption for data protection
+
+### Smart Document Processing
+
+- Support for multiple document formats (PDF, Word, scanned images)
+- Intelligent field detection using LLM
+- Context-aware form analysis
+- Automated data validation
+
+### Intelligent Automation
+
+- **Smart Field Detection**: LLM-powered recognition of form fields regardless of layout
+- **Data Validation**: Contextual verification of input types (numeric, text, dates)
+- **Gap Analysis**: Automatic identification of missing information
+- **Smart Suggestions**: Context-based field recommendations
+
+## 🔄 How It Works
+
+1. **Profile Setup**
+
+   - Create a secure account
+   - Input personal information
+   - Upload digital signature
+   - Set privacy preferences
+
+2. **Document Upload**
+
+   - Upload forms in various formats
+   - Automatic document type recognition
+   - Instant field detection
+
+3. **Automated Filling**
+
+   - Smart mapping of stored data to form fields
+   - Intelligent field detection and population
+   - Context-aware suggestions
+
+4. **Review & Submit**
+   - Complete verification of filled forms
+   - Edit capabilities for any field
+   - Final validation before submission
+
+## 🛡️ Security
+
+- End-to-end encryption
+- Secure data storage
+- Regular security audits
+- GDPR compliant
+- SOC 2 certified
+
+## 🌟 Use Cases
+
+- Job Onboarding Documentation
+- Tax Form Filing
+- Legal Document Processing
+- Insurance Forms
+- Government Applications
+- Academic Registrations
+
+## 📱 Supported Platforms
+
+- Web Application
+- Mobile-responsive interface
+- Chrome Extension (coming soon)
+- Mobile App (in development)
+
+## 🔧 Technical Stack
+
+- Frontend: Next.js, React, TypeScript
+- Backend: [Your backend tech]
+- AI/ML: Large Language Models
+- Security: [Your security implementations]
+
+## 🚀 Getting Started
+
+Clone the repository
+
+```
+git clone https://github.com/stephanienguyen2020/zapfill.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the development server
 
-## Learn More
+```
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For detailed documentation, please visit [docs.zapfill.com](https://docs.zapfill.com)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🤝 Contributing
 
-## Deploy on Vercel
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the [MIT License](LICENSE)
+
+## 📞 Support
+
+For support, please email support@zapfill.com or join our [Discord community](https://discord.gg/zapfill)
+
+## 🙋‍♀️ About the Creator
+
+Created by Stephanie, CS @ Columbia University & Cheryl, UX/UI Design @ Drexel University
+
+---
+
+<p align="center">
+Made with ❤️ by ZapFill Team
+</p>
