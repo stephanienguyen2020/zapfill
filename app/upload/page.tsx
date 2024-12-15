@@ -365,6 +365,21 @@ export default function UploadPage() {
                         )}
                       </div>
                     </div>
+
+                    <Button
+                      className="w-full"
+                      onClick={handleStartFilling}
+                      disabled={isProcessing}
+                    >
+                      {isProcessing ? (
+                        "Processing..."
+                      ) : (
+                        <>
+                          Start Filling
+                          <Upload className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </TabsContent>
 

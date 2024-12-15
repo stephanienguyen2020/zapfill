@@ -144,11 +144,11 @@ export function ReviewForm({
       >
         <TabsList className="px-6 pt-2">
           <TabsTrigger value="filled" className="relative">
-            Available Data ({filledFields.length})
+            Available Data
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform origin-left transition-transform" />
           </TabsTrigger>
           <TabsTrigger value="missing" className="relative">
-            Missing Information ({missingFields.length})
+            Missing Information
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform origin-left transition-transform" />
           </TabsTrigger>
         </TabsList>
@@ -305,7 +305,7 @@ export function ReviewForm({
                 router.push("/download");
               }}
             >
-              Confirm Auto-fill ({missingFields.length})
+              Confirm Auto-fill
             </Button>
           </div>
         </TabsContent>

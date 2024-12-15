@@ -4,15 +4,16 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Upload, Undo2 } from "lucide-react";
-import { SignatureCanvasRef } from "react-signature-canvas";
+import type { SignatureCanvasRef } from "react-signature-canvas";
 
-// Wrap the entire SignaturePad component
-const SignaturePadComponent = dynamic(() => Promise.resolve(SignaturePad), {
-  ssr: false,
-});
-
+// Import SignatureCanvas with no SSR and proper loading state
 const SignatureCanvas = dynamic(() => import("react-signature-canvas"), {
   ssr: false,
+  loading: () => (
+    <div className="w-full h-[200px] border rounded-lg bg-gray-50 flex items-center justify-center">
+      <p className="text-gray-400">Loading signature pad...</p>
+    </div>
+  ),
 });
 
 interface SignaturePadProps {
@@ -116,4 +117,5 @@ function SignaturePad({ onSave }: SignaturePadProps) {
   );
 }
 
-export default SignaturePadComponent;
+// Export with dynamic import to prevent SSR
+export default dynamic(() => Promise.resolve(SignaturePad), { ssr: false });
