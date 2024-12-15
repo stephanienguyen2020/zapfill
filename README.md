@@ -2,9 +2,6 @@ Due to time constraints and limited human resources (our team currently has only
 
 # ZapFill
 
-<p align="center">
-  <img src="path_to_your_logo.png" alt="ZapFill Logo" width="200"/>
-</p>
 
 ZapFill is an AI-powered document automation tool that revolutionizes the way people handle paperwork. By leveraging advanced LLM technology, ZapFill streamlines form filling for job onboarding, tax filings, legal documents, and more.
 
