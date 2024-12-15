@@ -32,6 +32,11 @@ import Image from "next/image";
 import SignaturePad from "@/components/signature-pad";
 import { useReviewDocument } from "@/contexts/ReviewDocumentContext";
 
+type ProgressStep = {
+  label: string;
+  status: "current" | "completed" | "upcoming";
+};
+
 export default function UploadPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -179,7 +184,7 @@ export default function UploadPage() {
       label: "File Filling",
       status: uploadStep === "filling" ? "current" : "upcoming",
     },
-  ] as const;
+  ] as const satisfies ProgressStep[];
 
   const firstName = profileInfo.firstName || "User";
 

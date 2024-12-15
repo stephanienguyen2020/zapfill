@@ -19,3 +19,8 @@ declare module "react-signature-canvas" {
   const SignatureCanvas: ComponentType<SignatureCanvasProps>;
   export default SignatureCanvas;
 }
+
+type ProgressStep = {
+  label: string;
+  status: "current" | "completed" | "upcoming";
+};

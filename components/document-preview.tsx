@@ -6,13 +6,15 @@ import { Card } from "@/components/ui/card";
 
 interface DocumentPreviewProps {
   file: File | null;
-  isProcessing: boolean;
+  isProcessing?: boolean;
+  onStartFilling?: () => Promise<void>;
   pdfUrl?: string;
 }
 
 export function DocumentPreview({
   file,
   isProcessing,
+  onStartFilling,
   pdfUrl,
 }: DocumentPreviewProps) {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
