@@ -474,16 +474,61 @@ export default function UploadPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="workAddress">Work Address</Label>
-                        <Input
-                          id="workAddress"
-                          value={profileInfo.workAddress || ""}
-                          readOnly
-                          className="bg-gray-50"
-                        />
+                        <Label className="flex items-center gap-2">
+                          <span className="inline-block">🏢</span> Work Address
+                        </Label>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="workStreet">Street Address</Label>
+                            <Input
+                              id="workStreet"
+                              value={profileInfo.workStreet || ""}
+                              readOnly
+                              className="bg-gray-50"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="workAptNumber">
+                              Suite/Room Number
+                            </Label>
+                            <Input
+                              id="workAptNumber"
+                              value={profileInfo.workAptNumber || ""}
+                              readOnly
+                              className="bg-gray-50"
+                            />
+                          </div>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <Label htmlFor="workCity">City</Label>
+                              <Input
+                                id="workCity"
+                                value={profileInfo.workCity || ""}
+                                readOnly
+                                className="bg-gray-50"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="workState">State</Label>
+                              <Input
+                                id="workState"
+                                value={profileInfo.workState || ""}
+                                readOnly
+                                className="bg-gray-50"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="workZipCode">ZIP Code</Label>
+                              <Input
+                                id="workZipCode"
+                                value={profileInfo.workZipCode || ""}
+                                readOnly
+                                className="bg-gray-50"
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="netWorth">Net Worth</Label>
                         <Input

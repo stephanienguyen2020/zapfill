@@ -28,6 +28,11 @@ interface ProfileInfo {
   salaryRange: string;
   bankName: string;
   accountNumber: string;
+  workStreet: string;
+  workAptNumber: string;
+  workCity: string;
+  workState: string;
+  workZipCode: string;
 }
 
 interface ProfileContextType {
@@ -64,6 +69,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     salaryRange: "",
     bankName: "",
     accountNumber: "",
+    workStreet: "",
+    workAptNumber: "",
+    workCity: "",
+    workState: "",
+    workZipCode: "",
   });
 
   const updateProfileInfo = (info: Partial<ProfileInfo>) => {

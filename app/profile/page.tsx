@@ -399,14 +399,79 @@ export default function UserProfile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="workAddress">Work Address</Label>
-                    <Input
-                      id="workAddress"
-                      value={profileInfo.workAddress}
-                      onChange={(e) =>
-                        handlePersonalInfoChange("workAddress", e.target.value)
-                      }
-                    />
+                    <Label className="flex items-center gap-2">
+                      <span className="inline-block">🏢</span> Work Address
+                    </Label>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="workStreet">Street Address</Label>
+                        <Input
+                          id="workStreet"
+                          value={profileInfo.workStreet}
+                          onChange={(e) =>
+                            handlePersonalInfoChange(
+                              "workStreet",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="workAptNumber">Suite/Room Number</Label>
+                        <Input
+                          id="workAptNumber"
+                          value={profileInfo.workAptNumber}
+                          onChange={(e) =>
+                            handlePersonalInfoChange(
+                              "workAptNumber",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Suite, Room, etc."
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <Label htmlFor="workCity">City</Label>
+                          <Input
+                            id="workCity"
+                            value={profileInfo.workCity}
+                            onChange={(e) =>
+                              handlePersonalInfoChange(
+                                "workCity",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="workState">State</Label>
+                          <Input
+                            id="workState"
+                            value={profileInfo.workState}
+                            onChange={(e) =>
+                              handlePersonalInfoChange(
+                                "workState",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="workZipCode">ZIP Code</Label>
+                          <Input
+                            id="workZipCode"
+                            value={profileInfo.workZipCode}
+                            onChange={(e) =>
+                              handlePersonalInfoChange(
+                                "workZipCode",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
