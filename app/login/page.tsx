@@ -1,27 +1,102 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
-import { ArrowRight, Mail, Lock } from 'lucide-react'
+import { useState } from "react";
+import { Header } from "@/components/header-component";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { ArrowRight, Mail, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsLoading(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setIsLoading(false)
-    // Redirect to dashboard
-    window.location.href = '/dashboard'
-  }
+  const handleEmailLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const success = await login(email, password);
+
+      if (success) {
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+        router.push("/dashboard");
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid credentials",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    try {
+      // Simulate Google login
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast({
+        title: "Coming Soon",
+        description: "Google login will be available soon!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to login with Google",
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
+  };
+
+  const handleFacebookLogin = async () => {
+    setIsLoading(true);
+    try {
+      // Simulate Facebook login
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast({
+        title: "Coming Soon",
+        description: "Facebook login will be available soon!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to login with Facebook",
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,29 +104,54 @@ export default function Login() {
       <main className="container mx-auto px-6 py-12">
         <Card className="max-w-md mx-auto">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              Welcome back
+            </CardTitle>
             <CardDescription className="text-center">
               Log in to your account to continue using ZapFill
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <Input id="email" type="email" placeholder="john@example.com" required className="pl-10" />
+                  <Mail
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    required
+                    className="pl-10"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <Input id="password" type="password" required className="pl-10" />
+                  <Lock
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    className="pl-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : (
+                {isLoading ? (
+                  "Logging in..."
+                ) : (
                   <>
                     Log in <ArrowRight className="ml-2 h-4 w-4" />
                   </>
@@ -65,12 +165,19 @@ export default function Login() {
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                  <span className="bg-white px-2 text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleLogin}
+                  disabled={isLoading}
+                >
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -79,7 +186,12 @@ export default function Login() {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleFacebookLogin}
+                  disabled={isLoading}
+                >
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -92,9 +204,7 @@ export default function Login() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col items-center">
-            <p className="text-sm text-gray-600 mb-2">
-              Don't have an account?
-            </p>
+            <p className="text-sm text-gray-600 mb-2">Don't have an account?</p>
             <Link href="/signup">
               <Button variant="outline" className="w-full">
                 Sign up
@@ -104,6 +214,5 @@ export default function Login() {
         </Card>
       </main>
     </div>
-  )
+  );
 }
-

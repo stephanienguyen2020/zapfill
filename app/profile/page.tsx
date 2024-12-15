@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useProfile } from "@/contexts/ProfileContext";
+import { SignaturePad } from "@/components/signature-pad";
 
 export default function UserProfile() {
   const { toast } = useToast();
@@ -33,6 +34,7 @@ export default function UserProfile() {
   });
 
   const [isSaved, setIsSaved] = useState(false);
+  const [showSignaturePad, setShowSignaturePad] = useState(false);
 
   const handlePersonalInfoChange = (field: string, value: string) => {
     updateProfileInfo({ [field]: value });
@@ -210,39 +212,35 @@ export default function UserProfile() {
                   </div>
                 </div>
                 <div>
-                  <Label>Electric Signature</Label>
-                  <div className="border rounded-lg p-4 relative">
+                  <Label>Electronic Signature</Label>
+                  <div className="border rounded-lg p-4">
                     {profileInfo.signature ? (
-                      <Image
-                        src={profileInfo.signature}
-                        alt="Signature"
-                        width={400}
-                        height={100}
-                        className="w-full h-[100px] object-contain"
-                      />
-                    ) : (
-                      <div className="w-full h-[100px] flex items-center justify-center text-gray-400">
-                        No signature uploaded
+                      <div className="relative">
+                        <Image
+                          src={profileInfo.signature}
+                          alt="Signature"
+                          width={400}
+                          height={100}
+                          className="w-full h-[100px] object-contain"
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="absolute top-2 right-2"
+                          onClick={() => setShowSignaturePad(true)}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
                       </div>
+                    ) : (
+                      <SignaturePad
+                        onSave={(signature) => {
+                          updateProfileInfo({ signature });
+                          setShowSignaturePad(false);
+                        }}
+                      />
                     )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="absolute top-2 right-2"
-                      onClick={() =>
-                        document.getElementById("signature-upload")?.click()
-                      }
-                    >
-                      <Pencil className="h-4 w-4 mr-2" />
-                      {profileInfo.signature ? "Edit" : "Upload"}
-                    </Button>
-                    <input
-                      id="signature-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleSignatureUpload}
-                    />
                   </div>
                 </div>
               </CardContent>

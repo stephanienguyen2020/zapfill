@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-function HeaderComponent() {
+const HeaderComponent = () => {
   const { isLoggedIn, logout } = useAuth();
 
   return (
@@ -70,9 +70,10 @@ function HeaderComponent() {
       </div>
     </header>
   );
-}
+};
 
-const Header = dynamic(() => Promise.resolve(HeaderComponent), {
+// Use NoSSR wrapper to prevent hydration issues
+export const Header = dynamic(() => Promise.resolve(HeaderComponent), {
   ssr: false,
   loading: () => (
     <header className="flex items-center justify-between py-4 px-6 bg-white">
@@ -80,5 +81,3 @@ const Header = dynamic(() => Promise.resolve(HeaderComponent), {
     </header>
   ),
 });
-
-export { Header };
