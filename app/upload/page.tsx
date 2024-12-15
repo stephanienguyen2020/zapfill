@@ -30,6 +30,7 @@ import { DocumentPreview } from "@/components/document-preview";
 import { useProfile } from "@/contexts/ProfileContext";
 import Image from "next/image";
 import SignaturePad from "@/components/signature-pad";
+import { useReviewDocument } from "@/contexts/ReviewDocumentContext";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function UploadPage() {
   const signatureInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
   const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const { setDocumentFile } = useReviewDocument();
 
   const pastScans = [
     { id: 1, name: "W2_2024.pdf", status: "Completed", date: "14 Dec 2024" },
@@ -70,10 +72,20 @@ export default function UploadPage() {
     },
   ];
 
+  const [tempProfileInfo, setTempProfileInfo] = useState(() => ({
+    ...profileInfo,
+  }));
+
+  const handleTempProfileChange = (field: string, value: string) => {
+    setTempProfileInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted", { profileInfo, signature, documents });
+    console.log("Form submitted", { tempProfileInfo, signature, documents });
     toast({
       title: "Form Submitted",
       description: "Your form has been successfully submitted.",
@@ -135,10 +147,12 @@ export default function UploadPage() {
 
   const handleStartFilling = async () => {
     setIsProcessing(true);
-    // Simulate processing time
     await new Promise((resolve) => setTimeout(resolve, 3000));
     setIsProcessing(false);
     setUploadStep("filling");
+    if (selectedDocument) {
+      await setDocumentFile(selectedDocument);
+    }
     router.push("/review");
   };
 
@@ -236,8 +250,10 @@ export default function UploadPage() {
                         <Label htmlFor="firstName">First Name</Label>
                         <Input
                           id="firstName"
-                          value={profileInfo.firstName || ""}
-                          readOnly
+                          value={tempProfileInfo.firstName || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("firstName", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -245,8 +261,10 @@ export default function UploadPage() {
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input
                           id="lastName"
-                          value={profileInfo.lastName || ""}
-                          readOnly
+                          value={tempProfileInfo.lastName || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("lastName", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -255,8 +273,10 @@ export default function UploadPage() {
                       <Label htmlFor="ssn">Social Security Number</Label>
                       <Input
                         id="ssn"
-                        value={profileInfo.ssn || ""}
-                        readOnly
+                        value={tempProfileInfo.ssn || ""}
+                        onChange={(e) =>
+                          handleTempProfileChange("ssn", e.target.value)
+                        }
                         className="bg-gray-50"
                       />
                     </div>
@@ -266,8 +286,10 @@ export default function UploadPage() {
                         <Input
                           id="email"
                           type="email"
-                          value={profileInfo.email || ""}
-                          readOnly
+                          value={tempProfileInfo.email || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("email", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -275,8 +297,13 @@ export default function UploadPage() {
                         <Label htmlFor="phone">Phone Number</Label>
                         <Input
                           id="phone"
-                          value={profileInfo.phoneNumber || ""}
-                          readOnly
+                          value={tempProfileInfo.phoneNumber || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange(
+                              "phoneNumber",
+                              e.target.value
+                            )
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -287,8 +314,10 @@ export default function UploadPage() {
                         <Input
                           id="dob"
                           type="date"
-                          value={profileInfo.dob || ""}
-                          readOnly
+                          value={tempProfileInfo.dob || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("dob", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -296,8 +325,10 @@ export default function UploadPage() {
                         <Label htmlFor="gender">Gender</Label>
                         <Input
                           id="gender"
-                          value={profileInfo.gender || ""}
-                          readOnly
+                          value={tempProfileInfo.gender || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("gender", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -348,8 +379,10 @@ export default function UploadPage() {
                           <Label htmlFor="street">Street Address</Label>
                           <Input
                             id="street"
-                            value={profileInfo.street || ""}
-                            readOnly
+                            value={tempProfileInfo.street || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange("street", e.target.value)
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -357,8 +390,13 @@ export default function UploadPage() {
                           <Label htmlFor="aptNumber">Apartment Number</Label>
                           <Input
                             id="aptNumber"
-                            value={profileInfo.aptNumber || ""}
-                            readOnly
+                            value={tempProfileInfo.aptNumber || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "aptNumber",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -367,8 +405,10 @@ export default function UploadPage() {
                             <Label htmlFor="city">City</Label>
                             <Input
                               id="city"
-                              value={profileInfo.city || ""}
-                              readOnly
+                              value={tempProfileInfo.city || ""}
+                              onChange={(e) =>
+                                handleTempProfileChange("city", e.target.value)
+                              }
                               className="bg-gray-50"
                             />
                           </div>
@@ -376,8 +416,10 @@ export default function UploadPage() {
                             <Label htmlFor="state">State</Label>
                             <Input
                               id="state"
-                              value={profileInfo.state || ""}
-                              readOnly
+                              value={tempProfileInfo.state || ""}
+                              onChange={(e) =>
+                                handleTempProfileChange("state", e.target.value)
+                              }
                               className="bg-gray-50"
                             />
                           </div>
@@ -385,8 +427,13 @@ export default function UploadPage() {
                             <Label htmlFor="zipCode">ZIP Code</Label>
                             <Input
                               id="zipCode"
-                              value={profileInfo.zipCode || ""}
-                              readOnly
+                              value={tempProfileInfo.zipCode || ""}
+                              onChange={(e) =>
+                                handleTempProfileChange(
+                                  "zipCode",
+                                  e.target.value
+                                )
+                              }
                               className="bg-gray-50"
                             />
                           </div>
@@ -404,8 +451,13 @@ export default function UploadPage() {
                           </Label>
                           <Input
                             id="driversLicense"
-                            value={profileInfo.driversLicense || ""}
-                            readOnly
+                            value={tempProfileInfo.driversLicense || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "driversLicense",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -413,8 +465,10 @@ export default function UploadPage() {
                           <Label htmlFor="stateId">State ID</Label>
                           <Input
                             id="stateId"
-                            value={profileInfo.stateId || ""}
-                            readOnly
+                            value={tempProfileInfo.stateId || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange("stateId", e.target.value)
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -424,8 +478,13 @@ export default function UploadPage() {
                           <Label htmlFor="passport">Passport Number</Label>
                           <Input
                             id="passport"
-                            value={profileInfo.passport || ""}
-                            readOnly
+                            value={tempProfileInfo.passport || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "passport",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -433,8 +492,13 @@ export default function UploadPage() {
                           <Label htmlFor="nationality">Nationality</Label>
                           <Input
                             id="nationality"
-                            value={profileInfo.nationality || ""}
-                            readOnly
+                            value={tempProfileInfo.nationality || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "nationality",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -449,8 +513,10 @@ export default function UploadPage() {
                       <Label htmlFor="jobTitle">Job Title</Label>
                       <Input
                         id="jobTitle"
-                        value={profileInfo.jobTitle || ""}
-                        readOnly
+                        value={tempProfileInfo.jobTitle || ""}
+                        onChange={(e) =>
+                          handleTempProfileChange("jobTitle", e.target.value)
+                        }
                         className="bg-gray-50"
                       />
                     </div>
@@ -458,8 +524,13 @@ export default function UploadPage() {
                       <Label htmlFor="employerName">Employer Name</Label>
                       <Input
                         id="employerName"
-                        value={profileInfo.employerName || ""}
-                        readOnly
+                        value={tempProfileInfo.employerName || ""}
+                        onChange={(e) =>
+                          handleTempProfileChange(
+                            "employerName",
+                            e.target.value
+                          )
+                        }
                         className="bg-gray-50"
                       />
                     </div>
@@ -468,8 +539,10 @@ export default function UploadPage() {
                         <Label htmlFor="workEmail">Work Email</Label>
                         <Input
                           id="workEmail"
-                          value={profileInfo.workEmail || ""}
-                          readOnly
+                          value={tempProfileInfo.workEmail || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("workEmail", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -482,8 +555,13 @@ export default function UploadPage() {
                             <Label htmlFor="workStreet">Street Address</Label>
                             <Input
                               id="workStreet"
-                              value={profileInfo.workStreet || ""}
-                              readOnly
+                              value={tempProfileInfo.workStreet || ""}
+                              onChange={(e) =>
+                                handleTempProfileChange(
+                                  "workStreet",
+                                  e.target.value
+                                )
+                              }
                               className="bg-gray-50"
                             />
                           </div>
@@ -493,8 +571,13 @@ export default function UploadPage() {
                             </Label>
                             <Input
                               id="workAptNumber"
-                              value={profileInfo.workAptNumber || ""}
-                              readOnly
+                              value={tempProfileInfo.workAptNumber || ""}
+                              onChange={(e) =>
+                                handleTempProfileChange(
+                                  "workAptNumber",
+                                  e.target.value
+                                )
+                              }
                               className="bg-gray-50"
                             />
                           </div>
@@ -503,8 +586,13 @@ export default function UploadPage() {
                               <Label htmlFor="workCity">City</Label>
                               <Input
                                 id="workCity"
-                                value={profileInfo.workCity || ""}
-                                readOnly
+                                value={tempProfileInfo.workCity || ""}
+                                onChange={(e) =>
+                                  handleTempProfileChange(
+                                    "workCity",
+                                    e.target.value
+                                  )
+                                }
                                 className="bg-gray-50"
                               />
                             </div>
@@ -512,8 +600,13 @@ export default function UploadPage() {
                               <Label htmlFor="workState">State</Label>
                               <Input
                                 id="workState"
-                                value={profileInfo.workState || ""}
-                                readOnly
+                                value={tempProfileInfo.workState || ""}
+                                onChange={(e) =>
+                                  handleTempProfileChange(
+                                    "workState",
+                                    e.target.value
+                                  )
+                                }
                                 className="bg-gray-50"
                               />
                             </div>
@@ -521,8 +614,13 @@ export default function UploadPage() {
                               <Label htmlFor="workZipCode">ZIP Code</Label>
                               <Input
                                 id="workZipCode"
-                                value={profileInfo.workZipCode || ""}
-                                readOnly
+                                value={tempProfileInfo.workZipCode || ""}
+                                onChange={(e) =>
+                                  handleTempProfileChange(
+                                    "workZipCode",
+                                    e.target.value
+                                  )
+                                }
                                 className="bg-gray-50"
                               />
                             </div>
@@ -533,8 +631,10 @@ export default function UploadPage() {
                         <Label htmlFor="netWorth">Net Worth</Label>
                         <Input
                           id="netWorth"
-                          value={profileInfo.netWorth || ""}
-                          readOnly
+                          value={tempProfileInfo.netWorth || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange("netWorth", e.target.value)
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -542,8 +642,13 @@ export default function UploadPage() {
                         <Label htmlFor="salaryRange">Salary Range</Label>
                         <Input
                           id="salaryRange"
-                          value={profileInfo.salaryRange || ""}
-                          readOnly
+                          value={tempProfileInfo.salaryRange || ""}
+                          onChange={(e) =>
+                            handleTempProfileChange(
+                              "salaryRange",
+                              e.target.value
+                            )
+                          }
                           className="bg-gray-50"
                         />
                       </div>
@@ -558,8 +663,13 @@ export default function UploadPage() {
                           <Label htmlFor="bankName">Bank Name</Label>
                           <Input
                             id="bankName"
-                            value={profileInfo.bankName || ""}
-                            readOnly
+                            value={tempProfileInfo.bankName || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "bankName",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>
@@ -567,8 +677,13 @@ export default function UploadPage() {
                           <Label htmlFor="accountNumber">Account Number</Label>
                           <Input
                             id="accountNumber"
-                            value={profileInfo.accountNumber || ""}
-                            readOnly
+                            value={tempProfileInfo.accountNumber || ""}
+                            onChange={(e) =>
+                              handleTempProfileChange(
+                                "accountNumber",
+                                e.target.value
+                              )
+                            }
                             className="bg-gray-50"
                           />
                         </div>

@@ -6,15 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Edit } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Edit, Calendar as CalendarIcon } from "lucide-react";
+import Image from "next/image";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-export interface Field {
+export type Field = {
   id: string;
   label: string;
   value: string;
-  category: "general" | "detailed" | "professional";
+  type?: "text" | "date" | "signature";
   status: "review" | "confirmed";
-}
+};
 
 interface ReviewFormProps {
   filledFields: Field[];
@@ -38,6 +47,75 @@ export function ReviewForm({
   onRefreshDocument,
 }: ReviewFormProps) {
   const [activeTab, setActiveTab] = useState<"filled" | "missing">("filled");
+
+  const handleCheckboxChange = (fieldId: string, checked: boolean) => {
+    onFieldUpdate(
+      fieldId,
+      filledFields.find((f) => f.id === fieldId)?.value || ""
+    );
+  };
+
+  const renderField = (field: Field) => {
+    if (field.type === "signature") {
+      return (
+        <div className="relative h-[100px] w-full border rounded-lg overflow-hidden">
+          {field.value ? (
+            <Image
+              src={field.value}
+              alt="Signature"
+              fill
+              className="object-contain"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400">
+              No signature provided
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (field.type === "date") {
+      return (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !field.value && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {field.value ? (
+                format(new Date(field.value), "PPP")
+              ) : (
+                <span>Pick a date</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={field.value ? new Date(field.value) : undefined}
+              onSelect={(date) =>
+                onFieldUpdate(field.id, date ? date.toISOString() : "")
+              }
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      );
+    }
+
+    return (
+      <Input
+        id={field.id}
+        value={field.value}
+        onChange={(e) => onFieldUpdate(field.id, e.target.value)}
+      />
+    );
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
@@ -82,31 +160,24 @@ export function ReviewForm({
                   <Checkbox
                     id={`confirm-${field.id}`}
                     checked={field.status === "confirmed"}
-                    onCheckedChange={() => {}}
+                    onCheckedChange={(checked) =>
+                      handleCheckboxChange(field.id, checked as boolean)
+                    }
                   />
                   <div className="flex-1 space-y-1.5">
-                    <Label htmlFor={field.id}>{field.label}</Label>
-                    <Input
-                      id={field.id}
-                      value={field.value}
-                      onChange={(e) => onFieldUpdate(field.id, e.target.value)}
-                    />
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          field.category === "general"
-                            ? "bg-blue-100 text-blue-700"
-                            : field.category === "detailed"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-purple-100 text-purple-700"
-                        }`}
-                      >
-                        {field.category}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Review for accuracy
-                      </span>
-                    </div>
+                    <Label
+                      htmlFor={`confirm-${field.id}`}
+                      className="cursor-pointer"
+                      onClick={() =>
+                        handleCheckboxChange(
+                          field.id,
+                          field.status !== "confirmed"
+                        )
+                      }
+                    >
+                      {field.label}
+                    </Label>
+                    {renderField(field)}
                   </div>
                 </div>
               ))}
@@ -147,7 +218,7 @@ export function ReviewForm({
                 onRefreshDocument();
               }}
             >
-              Apply Information ({missingFields.length})
+              Confirm Auto-fill ({missingFields.length})
             </Button>
           </div>
         </TabsContent>
