@@ -210,6 +210,77 @@ export function ReviewForm({
               </Button>
             </div>
 
+            <div className="space-y-6 border rounded-lg p-4 bg-gray-50">
+              <div className="space-y-4">
+                <h4 className="font-semibold">Part 1 – New York State</h4>
+                <div className="flex items-start gap-4">
+                  <Checkbox id="ny-residence" />
+                  <div className="flex-1 space-y-1.5">
+                    <Label htmlFor="ny-residence" className="cursor-pointer">
+                      I certify that I am not a resident of New York State and
+                      that my residence is as stated above.
+                    </Label>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Checkbox id="ny-estimate" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="ny-estimate">I estimate that</Label>
+                      <Input className="w-20" placeholder="0" />
+                      <Label>
+                        % of my services during the year will be performed
+                        within New York State and subject to New York State
+                        withholding tax.
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold">Part 2 – New York City</h4>
+                <div className="flex items-start gap-4">
+                  <Checkbox id="nyc-residence" />
+                  <div className="flex-1 space-y-1.5">
+                    <Label htmlFor="nyc-residence" className="cursor-pointer">
+                      I certify that I am not a resident of New York City and
+                      that my residence is as stated above.
+                    </Label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold">Part 3 – Yonkers</h4>
+                <div className="flex items-start gap-4">
+                  <Checkbox id="yonkers-residence" />
+                  <div className="flex-1 space-y-1.5">
+                    <Label
+                      htmlFor="yonkers-residence"
+                      className="cursor-pointer"
+                    >
+                      I certify that I am not a resident of Yonkers and that my
+                      residence is as stated above.
+                    </Label>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Checkbox id="yonkers-estimate" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="yonkers-estimate">I estimate that</Label>
+                      <Input className="w-20" placeholder="0" />
+                      <Label>
+                        % of my services during the year will be performed
+                        within Yonkers.
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {missingFields.map((field, index) => (
               <div key={field.id} className="space-y-1.5">
                 <Label htmlFor={field.id}>

@@ -42,3 +42,32 @@ public/images/signatures/*
 # Documents
 public/documents/*
 !public/documents/.gitkeep
+
+# Uploaded files
+public/documents/
+public/uploads/
+public/signatures/
+
+# Local storage
+*.local
+local/*
+
+# Next.js
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
