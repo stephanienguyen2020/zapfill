@@ -6,24 +6,6 @@ import { Header } from "@/components/header";
 import { ReviewForm, type Field } from "@/components/review-form";
 import { DocumentPreview } from "@/components/document-preview";
 import { useProfile } from "@/contexts/ProfileContext";
-import { useDocument } from "@/contexts/DocumentContext";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useReviewDocument } from "@/contexts/ReviewDocumentContext";
 
 export default function ReviewPage() {
@@ -36,8 +18,6 @@ export default function ReviewPage() {
   const [documentName, setDocumentName] = useState<string>("");
   const { documentFile, documentMetadata } = useReviewDocument();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [pastScans, setPastScans] = useState([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -48,7 +28,7 @@ export default function ReviewPage() {
   }, []);
 
   useEffect(() => {
-    console.log("Document in review page:", documentFile); // Debug log
+    console.log("Document in review page:", documentFile);
   }, [documentFile]);
 
   const generateFieldsFromProfile = (): Field[] => {
@@ -170,18 +150,7 @@ export default function ReviewPage() {
 
   useEffect(() => {
     const initialFields = generateFieldsFromProfile();
-
-    const fieldsWithDate = initialFields.map((field) => {
-      if (field.id === "date") {
-        return {
-          ...field,
-          value: new Date().toISOString(),
-        };
-      }
-      return field;
-    });
-
-    setFilledFields(fieldsWithDate);
+    setFilledFields(initialFields);
   }, [profileInfo]);
 
   const [missingFields, setMissingFields] = useState<Field[]>([]);
@@ -222,13 +191,6 @@ export default function ReviewPage() {
     router.push("/download");
   };
 
-  const handleStartFilling = async () => {
-    setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsProcessing(false);
-    handleRefreshDocument();
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -245,60 +207,8 @@ export default function ReviewPage() {
             />
           </div>
 
-          <div className="space-y-8">
-            <DocumentPreview
-              file={documentFile}
-              onStartFilling={handleStartFilling}
-              isProcessing={isProcessing}
-            />
-
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Past Scans</h2>
-              <div className="flex justify-between items-center mb-4">
-                <div className="relative w-64">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-                <Select defaultValue="7">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select time range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">Last 7 days</SelectItem>
-                    <SelectItem value="30">Last 30 days</SelectItem>
-                    <SelectItem value="90">Last 90 days</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Transaction</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pastScans.map((scan) => (
-                    <TableRow key={scan.id}>
-                      <TableCell>{scan.name}</TableCell>
-                      <TableCell>
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {scan.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>{scan.date}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+          <div className="h-[calc(100vh-12rem)] sticky top-24">
+            <DocumentPreview file={documentFile} isProcessing={isProcessing} />
           </div>
         </div>
       </main>

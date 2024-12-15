@@ -16,6 +16,7 @@ import { Edit, Calendar as CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import type { HTMLAttributes } from "react";
 
 export type Field = {
   id: string;
@@ -120,7 +121,9 @@ export function ReviewForm({
   return (
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-2xl font-bold">Review your auto-filled</h1>
+        <h1 className="text-2xl font-bold">
+          Information detected from the document
+        </h1>
         <p className="text-gray-600 mt-2">
           Complete your document by adding these information
         </p>
@@ -133,7 +136,7 @@ export function ReviewForm({
       >
         <TabsList className="px-6 pt-2">
           <TabsTrigger value="filled" className="relative">
-            Filled Information ({filledFields.length})
+            Available Data ({filledFields.length})
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary transform origin-left transition-transform" />
           </TabsTrigger>
           <TabsTrigger value="missing" className="relative">
@@ -146,7 +149,7 @@ export function ReviewForm({
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">
-                Auto-filled from profile
+                The following data were gathered from your profile
               </h3>
               <Button variant="ghost" size="sm">
                 <Edit className="h-4 w-4 mr-2" />
@@ -197,6 +200,16 @@ export function ReviewForm({
 
         <TabsContent value="missing" className="flex-1 p-6">
           <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">
+                The following information was missing from your profile
+              </h3>
+              <Button variant="ghost" size="sm">
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+            </div>
+
             {missingFields.map((field, index) => (
               <div key={field.id} className="space-y-1.5">
                 <Label htmlFor={field.id}>
