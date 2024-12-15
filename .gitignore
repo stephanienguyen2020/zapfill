@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Signatures
+public/images/signatures/*
+!public/images/signatures/.gitkeep
+
+# Documents
+public/documents/*
+!public/documents/.gitkeep

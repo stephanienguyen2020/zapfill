@@ -1,95 +1,120 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Pencil, Upload } from 'lucide-react'
-import { useToast } from "@/components/ui/use-toast"
+import { useState } from "react";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Pencil } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useProfile } from "@/contexts/ProfileContext";
 
 export default function UserProfile() {
-  const { toast } = useToast()
-  const [activeTab, setActiveTab] = useState('general')
-  const [personalInfo, setPersonalInfo] = useState({
-    // General Information
-    fullName: 'Joseph Clark',
-    preferredName: 'Joe',
-    ssn: '123-45-6789',
-    email: 'joeclark@gmail.com',
-    phoneNumber: '(123)-(234)-(456)',
-    dob: '2000-09-24',
-    gender: 'male',
-    
-    // Detailed Information
-    mailingAddress: '456 Oak Street, Apt 5B, Chicago, IL 60654, USA',
-    permanentAddress: '123 Maple Avenue, Springfield, IL 62701, USA',
-    driversLicense: 'S55512345',
-    stateId: 'IL123456789',
-    passport: 'P987654321',
-    nationality: 'US Citizen',
-    
-    // Professional Information
-    jobTitle: 'Software Engineer',
-    employerName: 'TechFlow Innovations',
-    workEmail: 'joe.clark@techflow.com',
-    workAddress: '789 17th St, Chicago, IL 60654',
-    netWorth: '$250,000',
-    salaryRange: '$85,000 - $95,000 annually',
-    bankName: 'Wells Fargo',
-    accountNumber: '987654321'
-  })
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("general");
+  const { profileInfo, updateProfileInfo } = useProfile();
 
-  const [signature, setSignature] = useState<string | null>(null)
   const [dataPreferences, setDataPreferences] = useState({
     alwaysFillPhone: true,
     skipApartmentNumber: false,
-    showEmail: true
-  })
+    showEmail: true,
+  });
+
+  const [isSaved, setIsSaved] = useState(false);
 
   const handlePersonalInfoChange = (field: string, value: string) => {
-    setPersonalInfo(prev => ({ ...prev, [field]: value }))
-  }
+    updateProfileInfo({ [field]: value });
+  };
 
-  const handleSignatureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const handleSignatureUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setSignature(reader.result as string)
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("/api/upload-signature", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Upload failed");
+        }
+
+        const data = await response.json();
+        updateProfileInfo({ signature: data.filename });
+
+        toast({
+          title: "Success",
+          description: "Signature uploaded successfully",
+        });
+      } catch (error) {
+        console.error("Error uploading signature:", error);
+        toast({
+          title: "Error",
+          description: "Failed to upload signature",
+        });
       }
-      reader.readAsDataURL(file)
     }
-  }
+  };
 
   const handleDataPreferenceToggle = (preference: string) => {
-    setDataPreferences(prev => ({ ...prev, [preference]: !prev[preference as keyof typeof prev] }))
-  }
+    setDataPreferences((prev) => ({
+      ...prev,
+      [preference]: !prev[preference as keyof typeof prev],
+    }));
+  };
 
   const handleSaveChanges = () => {
-    console.log('Saving profile:', { personalInfo, signature, dataPreferences })
+    console.log("Saving profile:", {
+      personalInfo: profileInfo,
+      signature: profileInfo.signature,
+      dataPreferences,
+    });
+
+    setIsSaved(true);
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully!",
-    })
-  }
+    });
+
+    // Reset button text after 3 seconds
+    setTimeout(() => {
+      setIsSaved(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="container mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">Manage Your Profile</h1>
-        <p className="text-gray-600 mb-6">Update your personal details to make form-filling effortless.</p>
+        <p className="text-gray-600 mb-6">
+          Update your personal details to make form-filling effortless.
+        </p>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="general">General Information</TabsTrigger>
             <TabsTrigger value="detailed">Detailed Information</TabsTrigger>
-            <TabsTrigger value="professional">Professional Information</TabsTrigger>
+            <TabsTrigger value="professional">
+              Professional Information
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
@@ -100,19 +125,23 @@ export default function UserProfile() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="fullName">Full Name</Label>
+                    <Label htmlFor="firstName">First Name</Label>
                     <Input
-                      id="fullName"
-                      value={personalInfo.fullName}
-                      onChange={(e) => handlePersonalInfoChange('fullName', e.target.value)}
+                      id="firstName"
+                      value={profileInfo.firstName}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("firstName", e.target.value)
+                      }
                     />
                   </div>
                   <div>
-                    <Label htmlFor="preferredName">Preferred Name</Label>
+                    <Label htmlFor="lastName">Last Name</Label>
                     <Input
-                      id="preferredName"
-                      value={personalInfo.preferredName}
-                      onChange={(e) => handlePersonalInfoChange('preferredName', e.target.value)}
+                      id="lastName"
+                      value={profileInfo.lastName}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("lastName", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -120,8 +149,10 @@ export default function UserProfile() {
                   <Label htmlFor="ssn">Social Security Number</Label>
                   <Input
                     id="ssn"
-                    value={personalInfo.ssn}
-                    onChange={(e) => handlePersonalInfoChange('ssn', e.target.value)}
+                    value={profileInfo.ssn}
+                    onChange={(e) =>
+                      handlePersonalInfoChange("ssn", e.target.value)
+                    }
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -130,16 +161,20 @@ export default function UserProfile() {
                     <Input
                       id="email"
                       type="email"
-                      value={personalInfo.email}
-                      onChange={(e) => handlePersonalInfoChange('email', e.target.value)}
+                      value={profileInfo.email}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("email", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input
                       id="phoneNumber"
-                      value={personalInfo.phoneNumber}
-                      onChange={(e) => handlePersonalInfoChange('phoneNumber', e.target.value)}
+                      value={profileInfo.phoneNumber}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("phoneNumber", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -149,15 +184,19 @@ export default function UserProfile() {
                     <Input
                       id="dob"
                       type="date"
-                      value={personalInfo.dob}
-                      onChange={(e) => handlePersonalInfoChange('dob', e.target.value)}
+                      value={profileInfo.dob}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("dob", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="gender">Gender</Label>
                     <Select
-                      value={personalInfo.gender}
-                      onValueChange={(value) => handlePersonalInfoChange('gender', value)}
+                      value={profileInfo.gender}
+                      onValueChange={(value) =>
+                        handlePersonalInfoChange("gender", value)
+                      }
                     >
                       <SelectTrigger id="gender">
                         <SelectValue placeholder="Select gender" />
@@ -173,10 +212,12 @@ export default function UserProfile() {
                 <div>
                   <Label>Electric Signature</Label>
                   <div className="border rounded-lg p-4 relative">
-                    {signature ? (
-                      <img 
-                        src={signature}
-                        alt="Signature" 
+                    {profileInfo.signature ? (
+                      <Image
+                        src={profileInfo.signature}
+                        alt="Signature"
+                        width={400}
+                        height={100}
                         className="w-full h-[100px] object-contain"
                       />
                     ) : (
@@ -184,9 +225,16 @@ export default function UserProfile() {
                         No signature uploaded
                       </div>
                     )}
-                    <Button size="sm" variant="ghost" className="absolute top-2 right-2" onClick={() => document.getElementById('signature-upload')?.click()}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="absolute top-2 right-2"
+                      onClick={() =>
+                        document.getElementById("signature-upload")?.click()
+                      }
+                    >
                       <Pencil className="h-4 w-4 mr-2" />
-                      {signature ? 'Edit' : 'Upload'}
+                      {profileInfo.signature ? "Edit" : "Upload"}
                     </Button>
                     <input
                       id="signature-upload"
@@ -208,36 +256,82 @@ export default function UserProfile() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="mailingAddress">Mailing Address</Label>
+                  <Label htmlFor="street">Street Address</Label>
                   <Input
-                    id="mailingAddress"
-                    value={personalInfo.mailingAddress}
-                    onChange={(e) => handlePersonalInfoChange('mailingAddress', e.target.value)}
+                    id="street"
+                    value={profileInfo.street}
+                    onChange={(e) =>
+                      handlePersonalInfoChange("street", e.target.value)
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="permanentAddress">Permanent Address</Label>
+                  <Label htmlFor="aptNumber">Apartment Number (Optional)</Label>
                   <Input
-                    id="permanentAddress"
-                    value={personalInfo.permanentAddress}
-                    onChange={(e) => handlePersonalInfoChange('permanentAddress', e.target.value)}
+                    id="aptNumber"
+                    value={profileInfo.aptNumber}
+                    onChange={(e) =>
+                      handlePersonalInfoChange("aptNumber", e.target.value)
+                    }
+                    placeholder="Apt, Suite, Unit, etc."
                   />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      value={profileInfo.city}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("city", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
+                      value={profileInfo.state}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("state", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="zipCode">ZIP Code</Label>
+                    <Input
+                      id="zipCode"
+                      value={profileInfo.zipCode}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("zipCode", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="driversLicense">Driver's License Number</Label>
+                    <Label htmlFor="driversLicense">
+                      Driver&apos;s License Number
+                    </Label>
                     <Input
                       id="driversLicense"
-                      value={personalInfo.driversLicense}
-                      onChange={(e) => handlePersonalInfoChange('driversLicense', e.target.value)}
+                      value={profileInfo.driversLicense}
+                      onChange={(e) =>
+                        handlePersonalInfoChange(
+                          "driversLicense",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="stateId">State ID</Label>
                     <Input
                       id="stateId"
-                      value={personalInfo.stateId}
-                      onChange={(e) => handlePersonalInfoChange('stateId', e.target.value)}
+                      value={profileInfo.stateId}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("stateId", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -246,16 +340,20 @@ export default function UserProfile() {
                     <Label htmlFor="passport">Passport Number</Label>
                     <Input
                       id="passport"
-                      value={personalInfo.passport}
-                      onChange={(e) => handlePersonalInfoChange('passport', e.target.value)}
+                      value={profileInfo.passport}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("passport", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="nationality">Nationality</Label>
                     <Input
                       id="nationality"
-                      value={personalInfo.nationality}
-                      onChange={(e) => handlePersonalInfoChange('nationality', e.target.value)}
+                      value={profileInfo.nationality}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("nationality", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -274,16 +372,20 @@ export default function UserProfile() {
                     <Label htmlFor="jobTitle">Job Title</Label>
                     <Input
                       id="jobTitle"
-                      value={personalInfo.jobTitle}
-                      onChange={(e) => handlePersonalInfoChange('jobTitle', e.target.value)}
+                      value={profileInfo.jobTitle}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("jobTitle", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="employerName">Employer Name</Label>
                     <Input
                       id="employerName"
-                      value={personalInfo.employerName}
-                      onChange={(e) => handlePersonalInfoChange('employerName', e.target.value)}
+                      value={profileInfo.employerName}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("employerName", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -292,16 +394,20 @@ export default function UserProfile() {
                     <Label htmlFor="workEmail">Work Email</Label>
                     <Input
                       id="workEmail"
-                      value={personalInfo.workEmail}
-                      onChange={(e) => handlePersonalInfoChange('workEmail', e.target.value)}
+                      value={profileInfo.workEmail}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("workEmail", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="workAddress">Work Address</Label>
                     <Input
                       id="workAddress"
-                      value={personalInfo.workAddress}
-                      onChange={(e) => handlePersonalInfoChange('workAddress', e.target.value)}
+                      value={profileInfo.workAddress}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("workAddress", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -310,16 +416,20 @@ export default function UserProfile() {
                     <Label htmlFor="netWorth">Net Worth</Label>
                     <Input
                       id="netWorth"
-                      value={personalInfo.netWorth}
-                      onChange={(e) => handlePersonalInfoChange('netWorth', e.target.value)}
+                      value={profileInfo.netWorth}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("netWorth", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="salaryRange">Salary Range</Label>
                     <Input
                       id="salaryRange"
-                      value={personalInfo.salaryRange}
-                      onChange={(e) => handlePersonalInfoChange('salaryRange', e.target.value)}
+                      value={profileInfo.salaryRange}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("salaryRange", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -328,16 +438,23 @@ export default function UserProfile() {
                     <Label htmlFor="bankName">Bank Name</Label>
                     <Input
                       id="bankName"
-                      value={personalInfo.bankName}
-                      onChange={(e) => handlePersonalInfoChange('bankName', e.target.value)}
+                      value={profileInfo.bankName}
+                      onChange={(e) =>
+                        handlePersonalInfoChange("bankName", e.target.value)
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="accountNumber">Account Number</Label>
                     <Input
                       id="accountNumber"
-                      value={personalInfo.accountNumber}
-                      onChange={(e) => handlePersonalInfoChange('accountNumber', e.target.value)}
+                      value={profileInfo.accountNumber}
+                      onChange={(e) =>
+                        handlePersonalInfoChange(
+                          "accountNumber",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -354,11 +471,20 @@ export default function UserProfile() {
             <div className="space-y-4">
               {Object.entries(dataPreferences).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
-                  <Label htmlFor={key}>{key.split(/(?=[A-Z])/).join(" ")}</Label>
+                  <Label htmlFor={key}>
+                    {key.split(/(?=[A-Z])/).join(" ")}
+                  </Label>
                   <Switch
                     id={key}
                     checked={value}
                     onCheckedChange={() => handleDataPreferenceToggle(key)}
+                    className={cn(
+                      "border-2",
+                      value ? "border-white" : "border-black",
+                      "[&>span]:border-2",
+                      "[&>span]:border-black",
+                      value && "[&>span]:border-white"
+                    )}
                   />
                 </div>
               ))}
@@ -368,12 +494,11 @@ export default function UserProfile() {
 
         {/* Save Changes Button */}
         <div className="mt-6 text-center">
-          <Button size="lg" onClick={handleSaveChanges}>
-            Save Changes
+          <Button size="lg" onClick={handleSaveChanges} disabled={isSaved}>
+            {isSaved ? "Saved" : "Save Changes"}
           </Button>
         </div>
       </main>
     </div>
-  )
+  );
 }
-
