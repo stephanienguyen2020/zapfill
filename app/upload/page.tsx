@@ -28,11 +28,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { DocumentPreview } from "@/components/document-preview";
 import { useProfile } from "@/contexts/ProfileContext";
+import Image from "next/image";
+import SignaturePad from "@/components/signature-pad";
 
 export default function UploadPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { profileInfo } = useProfile();
+  const { profileInfo, updateProfileInfo } = useProfile();
   const [activeTab, setActiveTab] = useState("general");
   const [searchTerm, setSearchTerm] = useState("");
   const [signature, setSignature] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export default function UploadPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const signatureInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
+  const [showSignaturePad, setShowSignaturePad] = useState(false);
 
   const pastScans = [
     { id: 1, name: "W2_2024.pdf", status: "Completed", date: "14 Dec 2024" },
@@ -164,6 +167,8 @@ export default function UploadPage() {
     },
   ] as const;
 
+  const firstName = profileInfo.firstName || "User";
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -203,7 +208,7 @@ export default function UploadPage() {
             {/* Left Column - Form */}
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                Welcome back, {profileInfo?.preferredName || "User"}!
+                Welcome back, {firstName}!
               </h1>
               <p className="text-gray-600 mb-6">
                 Let us help you filling out another document today with AI!
@@ -226,16 +231,34 @@ export default function UploadPage() {
 
                 <TabsContent value="general" className="space-y-4 mt-6">
                   <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="fullName">Full Name</Label>
-                      <Input
-                        id="fullName"
-                        defaultValue={`${profileInfo.firstName} ${profileInfo.lastName}`}
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={profileInfo.firstName || ""}
+                          readOnly
+                          className="bg-gray-50"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={profileInfo.lastName || ""}
+                          readOnly
+                          className="bg-gray-50"
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label htmlFor="ssn">Social Security Number</Label>
-                      <Input id="ssn" defaultValue={profileInfo.ssn} />
+                      <Input
+                        id="ssn"
+                        value={profileInfo.ssn || ""}
+                        readOnly
+                        className="bg-gray-50"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -243,14 +266,18 @@ export default function UploadPage() {
                         <Input
                           id="email"
                           type="email"
-                          defaultValue={profileInfo.email}
+                          value={profileInfo.email || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                       <div>
                         <Label htmlFor="phone">Phone Number</Label>
                         <Input
                           id="phone"
-                          defaultValue={profileInfo.phoneNumber}
+                          value={profileInfo.phoneNumber || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                     </div>
@@ -260,54 +287,51 @@ export default function UploadPage() {
                         <Input
                           id="dob"
                           type="date"
-                          defaultValue={profileInfo.dob}
+                          value={profileInfo.dob || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                       <div>
                         <Label htmlFor="gender">Gender</Label>
-                        <Select defaultValue={profileInfo.gender}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Input
+                          id="gender"
+                          value={profileInfo.gender || ""}
+                          readOnly
+                          className="bg-gray-50"
+                        />
                       </div>
                     </div>
                     <div>
                       <Label>Electronic Signature</Label>
-                      <div className="border rounded-lg p-4 relative">
-                        {signature ? (
-                          <img
-                            src={signature}
-                            alt="Signature"
-                            className="w-full h-[100px] object-contain"
-                          />
-                        ) : (
-                          <div className="w-full h-[100px] flex items-center justify-center text-gray-400">
-                            No signature uploaded
+                      <div className="border rounded-lg p-4">
+                        {profileInfo.signature ? (
+                          <div className="relative">
+                            <Image
+                              src={profileInfo.signature}
+                              alt="Signature"
+                              width={400}
+                              height={100}
+                              className="w-full h-[100px] object-contain"
+                            />
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="absolute top-2 right-2"
+                              onClick={() => setShowSignaturePad(true)}
+                            >
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Edit
+                            </Button>
                           </div>
+                        ) : (
+                          <SignaturePad
+                            onSave={(signature) => {
+                              updateProfileInfo({ signature });
+                              setShowSignaturePad(false);
+                            }}
+                          />
                         )}
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          className="absolute top-2 right-2"
-                          onClick={() => signatureInputRef.current?.click()}
-                        >
-                          <Pencil className="h-4 w-4" />
-                          <span className="sr-only">Edit signature</span>
-                        </Button>
-                        <input
-                          ref={signatureInputRef}
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleSignatureUpload}
-                        />
                       </div>
                     </div>
                   </div>
@@ -324,33 +348,46 @@ export default function UploadPage() {
                           <Label htmlFor="street">Street Address</Label>
                           <Input
                             id="street"
-                            defaultValue={profileInfo.street}
+                            value={profileInfo.street || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                         <div>
                           <Label htmlFor="aptNumber">Apartment Number</Label>
                           <Input
                             id="aptNumber"
-                            defaultValue={profileInfo.aptNumber}
+                            value={profileInfo.aptNumber || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>
                             <Label htmlFor="city">City</Label>
-                            <Input id="city" defaultValue={profileInfo.city} />
+                            <Input
+                              id="city"
+                              value={profileInfo.city || ""}
+                              readOnly
+                              className="bg-gray-50"
+                            />
                           </div>
                           <div>
                             <Label htmlFor="state">State</Label>
                             <Input
                               id="state"
-                              defaultValue={profileInfo.state}
+                              value={profileInfo.state || ""}
+                              readOnly
+                              className="bg-gray-50"
                             />
                           </div>
                           <div>
                             <Label htmlFor="zipCode">ZIP Code</Label>
                             <Input
                               id="zipCode"
-                              defaultValue={profileInfo.zipCode}
+                              value={profileInfo.zipCode || ""}
+                              readOnly
+                              className="bg-gray-50"
                             />
                           </div>
                         </div>
@@ -367,14 +404,18 @@ export default function UploadPage() {
                           </Label>
                           <Input
                             id="driversLicense"
-                            defaultValue={profileInfo.driversLicense}
+                            value={profileInfo.driversLicense || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                         <div>
                           <Label htmlFor="stateId">State ID</Label>
                           <Input
                             id="stateId"
-                            defaultValue={profileInfo.stateId}
+                            value={profileInfo.stateId || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                       </div>
@@ -383,14 +424,18 @@ export default function UploadPage() {
                           <Label htmlFor="passport">Passport Number</Label>
                           <Input
                             id="passport"
-                            defaultValue={profileInfo.passport}
+                            value={profileInfo.passport || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                         <div>
                           <Label htmlFor="nationality">Nationality</Label>
                           <Input
                             id="nationality"
-                            defaultValue={profileInfo.nationality}
+                            value={profileInfo.nationality || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                       </div>
@@ -404,14 +449,18 @@ export default function UploadPage() {
                       <Label htmlFor="jobTitle">Job Title</Label>
                       <Input
                         id="jobTitle"
-                        defaultValue={profileInfo.jobTitle}
+                        value={profileInfo.jobTitle || ""}
+                        readOnly
+                        className="bg-gray-50"
                       />
                     </div>
                     <div>
                       <Label htmlFor="employerName">Employer Name</Label>
                       <Input
                         id="employerName"
-                        defaultValue={profileInfo.employerName}
+                        value={profileInfo.employerName || ""}
+                        readOnly
+                        className="bg-gray-50"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -419,14 +468,18 @@ export default function UploadPage() {
                         <Label htmlFor="workEmail">Work Email</Label>
                         <Input
                           id="workEmail"
-                          defaultValue={profileInfo.workEmail}
+                          value={profileInfo.workEmail || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                       <div>
                         <Label htmlFor="workAddress">Work Address</Label>
                         <Input
                           id="workAddress"
-                          defaultValue={profileInfo.workAddress}
+                          value={profileInfo.workAddress || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                     </div>
@@ -435,14 +488,18 @@ export default function UploadPage() {
                         <Label htmlFor="netWorth">Net Worth</Label>
                         <Input
                           id="netWorth"
-                          defaultValue={profileInfo.netWorth}
+                          value={profileInfo.netWorth || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                       <div>
                         <Label htmlFor="salaryRange">Salary Range</Label>
                         <Input
                           id="salaryRange"
-                          defaultValue={profileInfo.salaryRange}
+                          value={profileInfo.salaryRange || ""}
+                          readOnly
+                          className="bg-gray-50"
                         />
                       </div>
                     </div>
@@ -456,14 +513,18 @@ export default function UploadPage() {
                           <Label htmlFor="bankName">Bank Name</Label>
                           <Input
                             id="bankName"
-                            defaultValue={profileInfo.bankName}
+                            value={profileInfo.bankName || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                         <div>
                           <Label htmlFor="accountNumber">Account Number</Label>
                           <Input
                             id="accountNumber"
-                            defaultValue={profileInfo.accountNumber}
+                            value={profileInfo.accountNumber || ""}
+                            readOnly
+                            className="bg-gray-50"
                           />
                         </div>
                       </div>

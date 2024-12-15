@@ -20,7 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useProfile } from "@/contexts/ProfileContext";
-import { SignaturePad } from "@/components/signature-pad";
+import SignaturePad from "@/components/signature-pad";
 
 export default function UserProfile() {
   const { toast } = useToast();

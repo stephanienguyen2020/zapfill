@@ -1,59 +1,50 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle } from 'lucide-react'
-import { useToast } from "@/components/ui/use-toast"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
-export default function LogoutConfirmation() {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
-
-  const handleCancel = () => {
-    router.back()
-  }
+export default function Logout() {
+  const router = useRouter();
+  const { logout } = useAuth();
+  const { toast } = useToast();
 
   const handleLogout = () => {
-    setIsLoggingOut(true)
-    // Simulate logout process
-    setTimeout(() => {
-      setIsLoggingOut(false)
-      // In a real application, you would clear the user's session here
-      localStorage.setItem('isLoggedIn', 'false')
-      router.push('/')
-    }, 1000)
-  }
+    logout();
+    toast({
+      title: "Success",
+      description: "You have been logged out successfully",
+    });
+    router.push("/login");
+  };
+
+  const handleCancel = () => {
+    router.back();
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-      <main className="flex-grow flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl">Logout Confirmation</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-lg font-medium">Are you sure you want to logout?</p>
-            <div className="flex items-center justify-center text-yellow-600 bg-yellow-50 p-3 rounded-md">
-              <AlertCircle className="w-5 h-5 mr-2" />
-              <p className="text-sm">Make sure to save any changes before logging out.</p>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <Card className="w-[400px]">
+        <CardHeader>
+          <CardTitle className="text-center">Confirm Logout</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-center text-gray-600">
+            Are you sure you want to log out?
+          </p>
+          <div className="flex justify-center space-x-4">
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button onClick={handleLogout} disabled={isLoggingOut}>
-              {isLoggingOut ? 'Logging out...' : 'Logout'}
+            <Button variant="destructive" onClick={handleLogout}>
+              Logout
             </Button>
-          </CardFooter>
-        </Card>
-      </main>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }
-

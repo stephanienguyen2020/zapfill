@@ -9,7 +9,7 @@ interface SignaturePadProps {
   onSave: (signature: string) => void;
 }
 
-export function SignaturePad({ onSave }: SignaturePadProps) {
+export default function SignaturePad({ onSave }: SignaturePadProps) {
   const sigPadRef = useRef<SignatureCanvas>(null);
   const [mode, setMode] = useState<"draw" | "upload">("draw");
 
