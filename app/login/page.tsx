@@ -45,7 +45,6 @@ export default function Login() {
         toast({
           title: "Error",
           description: "Invalid credentials",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -53,7 +52,6 @@ export default function Login() {
       toast({
         title: "Error",
         description: "Something went wrong",
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -73,7 +71,6 @@ export default function Login() {
       toast({
         title: "Error",
         description: "Failed to login with Google",
-        variant: "destructive",
       });
     }
     setIsLoading(false);
@@ -92,7 +89,6 @@ export default function Login() {
       toast({
         title: "Error",
         description: "Failed to login with Facebook",
-        variant: "destructive",
       });
     }
     setIsLoading(false);
