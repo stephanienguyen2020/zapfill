@@ -84,9 +84,8 @@ ZapFill is an AI-powered document automation tool that revolutionizes the way pe
 ## 🔧 Technical Stack
 
 - Frontend: Next.js, React, TypeScript
-- Backend: [Your backend tech]
-- AI/ML: Large Language Models
-- Security: [Your security implementations]
+- Backend: Python, Express.js, Node.js
+- LLM: Grok
 
 ## 🚀 Getting Started
 
