@@ -1,5 +1,7 @@
 Due to time constraints and limited human resources (our team currently has only one developer), we were unable to implement the OAuth functionality. As a result, accessing the platform requires a special account. If you’d like to test it out, let us know, and we’ll provide you with the necessary credentials
 
+Try it out here: https://kzmoesrtg16g6z2hgkss.lite.vusercontent.net/
+
 # ZapFill
 
 
