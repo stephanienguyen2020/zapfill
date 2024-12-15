@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
 
 interface DocumentPreviewProps {
   file: File | null;
   isProcessing: boolean;
+  pdfUrl?: string;
 }
 
-export function DocumentPreview({ file, isProcessing }: DocumentPreviewProps) {
+export function DocumentPreview({
+  file,
+  isProcessing,
+  pdfUrl,
+}: DocumentPreviewProps) {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
   // Create object URL when file changes
@@ -19,6 +23,8 @@ export function DocumentPreview({ file, isProcessing }: DocumentPreviewProps) {
       const url = URL.createObjectURL(file);
       setObjectUrl(url);
       return () => URL.revokeObjectURL(url);
+    } else {
+      setObjectUrl(null);
     }
   }, [file]);
 
@@ -29,10 +35,16 @@ export function DocumentPreview({ file, isProcessing }: DocumentPreviewProps) {
           <h3 className="text-lg font-semibold">Document Preview</h3>
         </div>
         <div className="border rounded-lg p-4 flex-1 flex items-center justify-center bg-gray-50">
-          {file ? (
+          {pdfUrl ? (
+            <iframe
+              src={pdfUrl}
+              className="w-full h-full"
+              title="PDF Preview"
+            />
+          ) : file ? (
             file.type === "application/pdf" ? (
               <iframe
-                src={objectUrl || ""}
+                src={objectUrl || undefined}
                 className="w-full h-full"
                 title="PDF Preview"
               />

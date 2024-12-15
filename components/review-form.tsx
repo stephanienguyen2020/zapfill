@@ -17,6 +17,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { HTMLAttributes } from "react";
+import { useRouter } from "next/navigation";
 
 export type Field = {
   id: string;
@@ -48,12 +49,19 @@ export function ReviewForm({
   onRefreshDocument,
 }: ReviewFormProps) {
   const [activeTab, setActiveTab] = useState<"filled" | "missing">("filled");
+  const router = useRouter();
 
   const handleCheckboxChange = (fieldId: string, checked: boolean) => {
     onFieldUpdate(
       fieldId,
       filledFields.find((f) => f.id === fieldId)?.value || ""
     );
+  };
+
+  const handleConfirm = () => {
+    onConfirmAutoFill();
+    onRefreshDocument();
+    router.push("/download");
   };
 
   const renderField = (field: Field) => {
@@ -186,13 +194,7 @@ export function ReviewForm({
               ))}
             </div>
 
-            <Button
-              className="w-full"
-              onClick={() => {
-                onConfirmAutoFill();
-                onRefreshDocument();
-              }}
-            >
+            <Button className="w-full" onClick={handleConfirm}>
               Confirm Auto-fill
             </Button>
           </div>
@@ -300,6 +302,7 @@ export function ReviewForm({
               onClick={() => {
                 onApplyMissing();
                 onRefreshDocument();
+                router.push("/download");
               }}
             >
               Confirm Auto-fill ({missingFields.length})
