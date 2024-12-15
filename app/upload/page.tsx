@@ -321,22 +321,38 @@ export default function UploadPage() {
                       </Label>
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="mailingAddress">
-                            Mailing Address
-                          </Label>
+                          <Label htmlFor="street">Street Address</Label>
                           <Input
-                            id="mailingAddress"
-                            defaultValue={profileInfo.mailingAddress}
+                            id="street"
+                            defaultValue={profileInfo.street}
                           />
                         </div>
                         <div>
-                          <Label htmlFor="permanentAddress">
-                            Permanent Address
-                          </Label>
+                          <Label htmlFor="aptNumber">Apartment Number</Label>
                           <Input
-                            id="permanentAddress"
-                            defaultValue={profileInfo.permanentAddress}
+                            id="aptNumber"
+                            defaultValue={profileInfo.aptNumber}
                           />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="city">City</Label>
+                            <Input id="city" defaultValue={profileInfo.city} />
+                          </div>
+                          <div>
+                            <Label htmlFor="state">State</Label>
+                            <Input
+                              id="state"
+                              defaultValue={profileInfo.state}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="zipCode">ZIP Code</Label>
+                            <Input
+                              id="zipCode"
+                              defaultValue={profileInfo.zipCode}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
